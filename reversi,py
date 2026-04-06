@@ -1,12 +1,22 @@
 board = [["." for _ in range(8)]for _ in range(8)]
 def print_board(board):
     for row in board:
-        print(" ".join(row))
+        display = []
+        for cell in row:
+            if cell == "B":
+                display.append("⚫️")
+            elif cell == "W":
+                display.append("⚪️")
+            else:
+                display.append(". ")
+        print(" ".join(display))
+
 def put_black(board, y, x):
     if board[y][x] != ".":
         return False
     board[y][x] = "B"
     return True
+
 def put_white(board, y, x):
     if board[y][x] != ".":
         return False
@@ -82,13 +92,21 @@ def flip(board, y, x, player):
             nx += dx
 
 player = "B"
-y = int(input("y: "))
-x = int(input("x: "))
+while True:
+    print_board(board)
+    print(player + "の番です")
+    y = int(input("y: "))
+    x = int(input("x: "))
 
-if place(board, y ,x, player):
-    print("置けました")
-else:
-    print("置けませんでした")
+    if place(board, y, x, player):
+        player = "W" if player == "B" else "B"
+    else:
+        print("置けませんでした")
+        player = "W" if player == "B" else "B"
+    if place(board, y ,x, player):
+        print("置けました")
+    else:
+        print("置けませんでした")
 
-print_board(board)
+    print_board(board)
 
