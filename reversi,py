@@ -98,15 +98,13 @@ while True:
     y = int(input("y: "))
     x = int(input("x: "))
 
-    if place(board, y, x, player):
-        player = "W" if player == "B" else "B"
-    else:
-        print("置けませんでした")
-        player = "W" if player == "B" else "B"
     if place(board, y ,x, player):
         print("置けました")
     else:
         print("置けませんでした")
 
     print_board(board)
-
+    if player == "B":
+        player = "W"
+    else:
+        player = "B"
