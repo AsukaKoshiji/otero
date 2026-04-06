@@ -1,0 +1,93 @@
+board = [["." for _ in range(8)]for _ in range(8)]
+def print_board(board):
+    for row in board:
+        print(" ".join(row))
+def put_black(board, y, x):
+    if board[y][x] != ".":
+        return False
+    board[y][x] = "B"
+    return True
+def put_white(board, y, x):
+    if board[y][x] != ".":
+        return False
+    board[y][x] = "W"
+    return True
+        
+put_black(board, 3 ,3)
+put_black(board, 4, 4)
+put_white(board, 3, 4)
+put_white(board, 4, 3)
+
+print_board(board)
+
+directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+def place(board, y, x, player):
+    if board[y][x] != ".":
+        return False
+
+    enemy = "W" if player == "B" else "B"
+    can_put = False
+
+    for dy, dx in directions:
+        ny, nx = y + dy, x + dx
+        found_enemy = False
+
+        while 0 <= ny < 8 and 0 <= nx < 8:
+            if board[ny][nx] == enemy:
+                found_enemy = True
+
+            elif board[ny][nx] == player:
+                if found_enemy:
+                    can_put = True
+                break
+
+            else:
+                break
+
+            ny += dy
+            nx += dx
+
+    if not can_put:
+        return False
+
+    board[y][x] = player
+    flip(board, y, x, player)
+    return True
+
+def flip(board, y, x, player):
+
+    if player == "B":
+        enemy = "W"
+    else:
+        enemy = "B"
+
+    for dy, dx in directions:   #8方向同時処理
+        nx, ny = x +dx, y + dy  #1マス隣からスタート
+        cells = []
+        found_enemy = False
+        while 0 <= nx < 8 and 0 <= ny < 8:
+            if board[ny][nx] == enemy:  #1マス隣が相手の石ならその先を見る
+                cells.append((ny, nx))
+                found_enemy = True
+            elif board[ny][nx] == player:   #間に相手の石があればひっくり返す
+                if found_enemy:
+                    for cy, cx in cells:
+                        board[cy][cx] = player
+                        break
+            else:   #いきなり自分の石があった場合はひっくり返さない
+                break
+
+            ny += dy    #次のマスに進む
+            nx += dx
+
+player = "B"
+y = int(input("y: "))
+x = int(input("x: "))
+
+if place(board, y ,x, player):
+    print("置けました")
+else:
+    print("置けませんでした")
+
+print_board(board)
