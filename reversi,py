@@ -66,7 +66,6 @@ def place(board, y, x, player):
     return True
 
 def flip(board, y, x, player):
-
     if player == "B":
         enemy = "W"
     else:
@@ -84,7 +83,7 @@ def flip(board, y, x, player):
                 if found_enemy:
                     for cy, cx in cells:
                         board[cy][cx] = player
-                        break
+                break
             else:   #いきなり自分の石があった場合はひっくり返さない
                 break
 
