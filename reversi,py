@@ -1,15 +1,7 @@
 board = [["." for _ in range(8)]for _ in range(8)]
 def print_board(board):
-    for raw in board:
-        display = []
-        for cell in raw:
-            if cell == "B":
-                display.append("⚫︎")
-            elif cell == "W":
-                display.append("⚪︎")
-            else:
-                display.append(". ")
-        print(" ".join(display))
+    for row in board:
+        print(" ".join(row))
 def put_black(board, y, x):
     if board[y][x] != ".":
         return False
@@ -99,3 +91,4 @@ else:
     print("置けませんでした")
 
 print_board(board)
+
