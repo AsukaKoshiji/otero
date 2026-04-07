@@ -8,6 +8,18 @@ board[4][4] = "W"
 
 directions = [(0,1), (0,-1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
+def print_board(board):
+    for row in board:
+        display = []
+        for cell in row:
+            if cell == "B":
+                display.append("⚫️")
+            elif cell == "W":
+                display.append("⚪️")
+            else:
+                display.append(". ")
+        print(" ".join(display))
+
 def place(board, y, x, player):
     if board[y][x] != ".":
         return False
@@ -17,15 +29,17 @@ def place(board, y, x, player):
 
     for dy, dx in directions:
         ny, nx = y + dy, x + dx
-        cells = []
+        found_enemy = False
 
         while 0 <= ny < 8 and 0 <= nx < 8:
             if board[ny][nx] == enemy:
-                cells.append((ny, nx))
+                found_enemy = True
+
             elif board[ny][nx] == player:
-                if cells:
+                if found_enemy:
                     can_put = True
                 break
+
             else:
                 break
 
@@ -34,6 +48,10 @@ def place(board, y, x, player):
 
     if not can_put:
         return False
+
+    board[y][x] = player
+    flip(board, y, x, player)
+    return True
 
 def flip(board, y, x, player):      #ひっくり返す処理
     enemy = "W" if player == "B" else "B"
@@ -57,6 +75,7 @@ def flip(board, y, x, player):      #ひっくり返す処理
 
 root = tk.Tk()
 root.title("リバーシ")
+player = "B"
 
 def update_board():
     for y in range(8):
@@ -70,13 +89,52 @@ def update_board():
 
 def clicked(y, x):      #クリック処理
     global player
-    print("クリック：", y, x,)
 
     if place(board, y, x, player):
         update_board()
+
+        if is_full(board):
+            print("=====ゲーム終了=====")
+        show_result(board)
+
         player = "W" if player == "B" else "B"
     else:
         print("置けません")
+
+def is_full(board):
+    for row in board:
+        if "." in row:
+            return False
+        return True
+
+
+print_board(board)
+if player == "B":
+        player = "W"
+else:
+        player = "B"
+    
+def counnt_stones(board):       #カウント
+        black_count = 0
+        white_count = 0
+        for row in board:
+            for cell in row:
+                if cell == "B":
+                    black_count += 1
+                elif cell == "W":
+                    white_count += 1
+        return black_count, white_count
+
+def show_result(board):      #結果表示
+        black_count, white_count = counnt_stones(board)
+        print(f"黒：{black_count}個")
+        print(f"白:{white_count}個")
+        if black_count > white_count:
+            print("黒の勝ちです")
+        elif white_count > black_count:
+            print("白の勝ちです")
+        else:
+            print("引き分けです")
 
 buttons = []
 played = "B"
@@ -84,7 +142,7 @@ played = "B"
 for y in range(8):      #ボタン
     row = []
     for x in range(8):
-        btn = tk.Button(root, text = ".", width = 4, height = 2, command= lambda y=y, x=x: clicked(y, x))
+        btn = tk.Button(root, text = ".", width = 4, height = 2, bg = "green", fg = "white", command= lambda y=y, x=x: clicked(y, x))
     
         btn.grid(row = y, column = x)
         row.append(btn)
