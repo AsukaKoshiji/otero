@@ -102,12 +102,22 @@ while True:
     else:
         print("置けませんでした")
 
+    def is_full(board):
+        for row in board:
+            if "." in row:
+                return False
+            return True
+        if is_full(board):
+            print("=====ゲーム終了=====")
+            show_result(board)
+
     print_board(board)
     if player == "B":
         player = "W"
     else:
         player = "B"
-    def counnt_stones(board):
+    
+    def counnt_stones(board):       #カウント
         black_count = 0
         white_count = 0
         for row in board:
@@ -116,9 +126,9 @@ while True:
                     black_count += 1
                 elif cell == "W":
                     white_count += 1
-    
         return black_count, white_count
-    def show_result(board):
+
+    def show_result(board):      #結果表示
         black_count, white_count = counnt_stones(board)
         print(f"黒：{black_count}個")
         print(f"白:{white_count}個")
@@ -128,4 +138,3 @@ while True:
             print("白の勝ちです")
         else:
             print("引き分けです")
-            
