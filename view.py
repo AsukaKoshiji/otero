@@ -93,10 +93,6 @@ def clicked(y, x):      #クリック処理
     if place(board, y, x, player):
         update_board()
 
-        if is_full(board):
-            print("=====ゲーム終了=====")
-        show_result(board)
-
         player = "W" if player == "B" else "B"
     else:
         print("置けません")
