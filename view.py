@@ -5,7 +5,7 @@ def get_valid_moves(board, player):
     moves = []
     for y in range(8):
         for x in range(8):
-            if place(board, y, x, place, True):
+            if place(board, y, x, player, True):
                 moves.append((y, x))
     return moves
 
@@ -25,6 +25,7 @@ def computer_turn():
     global player
 
     moves = get_valid_moves(board, player)
+
     if moves:
         y, x = random.choice(moves)
         place(board, y, x, player)
@@ -32,8 +33,14 @@ def computer_turn():
     else:
         print("コンピュータパス")
 
-        player = "B"
-        update_status
+    player = "B"
+    update_status()
+    
+    if not has_valid_move(board, player):
+        print("=====ゲーム終了=====")
+        show_result(board)
+        return
+
     
 board = [["." for _ in range(8)] for _ in range(8)]
 
@@ -141,6 +148,7 @@ def clicked(y, x):
 #プレイヤー（黒）
     if player != "B":
         return
+    
     if place(board, y, x, player):
         update_board()
 
@@ -150,18 +158,6 @@ def clicked(y, x):
         root.after(500, computer_turn)
     else:
         print("置けません")
-
-#コンピュータ（白）
-    if computer_move():
-        update_board()
-            
-        player = "B"
-        update_status()
-
-                    # パス処理
-    if not has_valid_move(board, player):
-        print("パス")
-        update_status()
 
         if not has_valid_move(board, player):
             print("=====ゲーム終了=====")
