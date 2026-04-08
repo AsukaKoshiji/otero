@@ -1,6 +1,36 @@
 import tkinter as tk
 import random
 
+board = [["." for _ in range(8)] for _ in range(8)]
+
+board[3][3] = "W"
+board[3][4] = "B"
+board[4][3] = "B"
+board[4][4] = "W"
+
+
+def count_stones(board):       #カウント
+    black_count = 0
+    white_count = 0
+    for row in board:
+        for cell in row:
+            if cell == "B":
+                black_count += 1
+            elif cell == "W":
+                white_count += 1
+    return black_count, white_count
+
+def show_result(board):   #勝敗表示
+    black, white = count_stones(board)
+        
+    if black > white:
+        status_label["text"] = f"黒の勝ちです({black} = {white})"
+    elif white > black:
+        status_label["text"] = f"白の勝ちです({white} = {black})"
+    else:
+        status_label["text"] = f"引き分けです({black} = {white})"  
+    update_status()    
+
 def get_valid_moves(board, player):
     moves = []
     for y in range(8):
@@ -35,19 +65,20 @@ def computer_turn():
 
     player = "B"
     update_status()
-    
+
     if not has_valid_move(board, player):
+        print("プレイヤーパス")
+
+        player = "W"
+        update_status()
+
+    if not has_valid_move(board, "B") and not has_valid_move(board, "W"):
         print("=====ゲーム終了=====")
         show_result(board)
         return
-
     
-board = [["." for _ in range(8)] for _ in range(8)]
+    root.after(500, computer_turn)
 
-board[3][3] = "W"
-board[3][4] = "B"
-board[4][3] = "B"
-board[4][4] = "W"
 
 directions = [(0,1), (0,-1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
@@ -62,7 +93,6 @@ def print_board(board):
             else:
                 display.append(". ")
         print(" ".join(display))
-
 
 def place(board, y, x, player,check_only = False):
     if board[y][x] != ".":
@@ -141,11 +171,16 @@ def update_board():
                 buttons[y][x]["text"] = "⚪️"
             else:
                 buttons[y][x]["text"] = " "
+                
+
+status_label = tk.Label(root, text = "黒の番", font = ("Arial", 16))
+status_label.grid(row=8, column=0, columnspan=8)
+
+
 #クリック処理
 def clicked(y, x):
     global player
 
-#プレイヤー（黒）
     if player != "B":
         return
     
@@ -159,21 +194,6 @@ def clicked(y, x):
     else:
         print("置けません")
 
-        if not has_valid_move(board, player):
-            print("=====ゲーム終了=====")
-            show_result(board)
-            return
-        else:
-            print("置けません")
-
-            print("テェック:", player, has_valid_move(board, player))
-
-
-    update_status()
-
-                
-            
-
 buttons = []
 played = "B"
 
@@ -186,31 +206,6 @@ for y in range(8):      #ボタン
         row.append(btn)
     buttons.append(row)
 
-status_label = tk.Label(root, text = "黒の番", font = ("Arial", 16))
-status_label.grid(row=8, column=0, columnspan=8)
-
-
-def count_stones(board):       #カウント
-    black_count = 0
-    white_count = 0
-    for row in board:
-        for cell in row:
-            if cell == "B":
-                black_count += 1
-            elif cell == "W":
-                white_count += 1
-    return black_count, white_count
-
-def show_result(board):   #勝敗表示
-    black, white = count_stones(board)
-        
-    if black > white:
-        status_label["text"] = f"黒の勝ちです({black} = {white})"
-    elif white > black:
-        status_label["text"] = f"白の勝ちです({white} = {black})"
-    else:
-        status_label["text"] = f"引き分けです({black} = {white})"
-                  
 def update_status():
     if player == "B":
         status_label["text"] = "黒の番"
@@ -219,5 +214,4 @@ def update_status():
 
     
 update_board()
-
 root.mainloop()
