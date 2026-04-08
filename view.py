@@ -20,9 +20,16 @@ def print_board(board):
                 display.append(". ")
         print(" ".join(display))
 
-def place(board, y, x, player):
+def place(board, y, x, player,check_only = False):
     if board[y][x] != ".":
         return False
+
+    def has_move(player):
+        for y in range(8):
+            for x in range(8):
+                if place(board, y, x, player, True):
+                    return True
+            return False
 
     enemy = "W" if player == "B" else "B"
     can_put = False
@@ -48,10 +55,20 @@ def place(board, y, x, player):
 
     if not can_put:
         return False
+    
+    if check_only:
+        return True
 
     board[y][x] = player
     flip(board, y, x, player)
     return True
+
+def has_valid_move(board, player):
+    for y in range(8):
+        for x in range(8):
+            if place(board, y, x, player, True):
+                return True
+            return False
 
 def flip(board, y, x, player):      #ひっくり返す処理
     enemy = "W" if player == "B" else "B"
@@ -94,43 +111,47 @@ def clicked(y, x):      #クリック処理
         update_board()
 
         player = "W" if player == "B" else "B"
+
+        if not has_valid_move(board, player):
+            print("パス")
+
+        player = "W" if player == "B" else "B"            
+        if not has_valid_move(board, player):
+            print("=====ゲーム終了=====")
+            show_result(board)
+            return
     else:
         print("置けません")
 
-def is_full(board):
-    for row in board:
-        if "." in row:
-            return False
-        return True
-
-
-print_board(board)
-if player == "B":
-        player = "W"
-else:
-        player = "B"
-    
-def counnt_stones(board):       #カウント
-        black_count = 0
-        white_count = 0
+    def is_full(board):
         for row in board:
-            for cell in row:
-                if cell == "B":
-                    black_count += 1
-                elif cell == "W":
-                    white_count += 1
-        return black_count, white_count
+            if "." in row:
+                return False
+            return True
+        
+        if is_full(board):
+            print("=====ゲーム終了=====")
 
-def show_result(board):      #結果表示
-        black_count, white_count = counnt_stones(board)
-        print(f"黒：{black_count}個")
-        print(f"白:{white_count}個")
-        if black_count > white_count:
-            print("黒の勝ちです")
-        elif white_count > black_count:
-            print("白の勝ちです")
-        else:
-            print("引き分けです")
+            def counnt_stones(board):       #カウント
+                black_count = 0
+                white_count = 0
+                for row in board:
+                    for cell in row:
+                        if cell == "B":
+                            black_count += 1
+                        elif cell == "W":
+                            white_count += 1
+                    return black_count, white_count
+            def show_result(board):      #結果表示
+                black_count, white_count = counnt_stones(board)
+                print(f"黒：{black_count}個")
+                print(f"白:{white_count}個")
+                if black_count > white_count:
+                    print("黒の勝ちです")
+                elif white_count > black_count:
+                    print("白の勝ちです")
+                else:
+                    print("引き分けです")
 
 buttons = []
 played = "B"
